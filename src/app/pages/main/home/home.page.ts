@@ -6,6 +6,10 @@ import { UtilsService } from 'src/app/services/utils.service';
 import { AddUpdateProductComponent } from 'src/app/shared/components/add-update-product/add-update-product.component';
 import { orderBy, where } from 'firebase/firestore';
 
+// -------importar jspdf
+declare let window: any;
+import * as jsPDF from 'jspdf';
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -61,6 +65,42 @@ export class HomePage implements OnInit {
       },
     });
   }
+  // ========== Generar PDF =============
+  generatePDF() {
+    const doc = new jsPDF.default();
+    doc.text('Detalle de Productos Vendidos y Ganancias Generadas', 10, 10);
+    
+
+    let totalProducts = 0;
+    let totalProfits = 0;
+
+    let y = 20;
+    this.products.forEach((product, index) => {
+      const productName = `Producto: ${product.name}`;
+      const unitsSold = `Unidades vendidas: ${product.soldUnits}`;
+      const profits = `Ganancias: $${(product.price * product.soldUnits).toFixed(2)}`;
+
+      totalProducts += product.soldUnits;
+      totalProfits += product.price * product.soldUnits;
+      
+      doc.text(productName, 10, y);
+      doc.text(unitsSold, 10, y + 5);
+      doc.text(profits, 10, y + 10);
+
+      y += 20;
+    });
+
+    // Agregar total de productos y ganancias generadas
+    doc.text(`Total de productos vendidos: ${totalProducts}`, 10, y + 20);
+    doc.text(`Total de ganancias: $${totalProfits.toFixed(2)}`, 10, y + 25);
+
+    // Abrir en otra ventana antes de guardarse
+    const pdfData = doc.output();
+    const blob = new Blob([pdfData], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+  }
+
 
   // ========== Agregar o Actualizar producto ========
   async addUpdateProduct(product?: Product) {
@@ -73,6 +113,15 @@ export class HomePage implements OnInit {
     if (success) this.getProducts();
   }
 
+  // ========== Abrir PDF ========
+  openPDF() {
+    const doc = new jsPDF.default();
+    doc.text('Hello world!', 10, 10);
+    const pdfData = doc.output();
+    const blob = new Blob([pdfData], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+  }
 
 // ========== Confirmar eliminacion del producto ========
   async confirmDeleteProduct(product: Product) {

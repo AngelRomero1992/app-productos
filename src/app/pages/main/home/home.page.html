@@ -78,7 +78,12 @@
     <h3>No Hay productos disponibles</h3>
   </div>
 
-
+  <!--===== Archivo pdf ===== -->
+  <ion-button color="success" (click)="generatePDF()">
+    <ion-icon name="document"></ion-icon>
+    Generar PDF
+  </ion-button>
+  
   <!---=======Nuevo Producto=================---->
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button (click)="addUpdateProduct()">

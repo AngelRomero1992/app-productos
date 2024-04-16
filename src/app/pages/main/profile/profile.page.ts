@@ -1,4 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Product } from 'src/app/models/product.model';
 import { User } from 'src/app/models/user.model';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
@@ -13,7 +15,8 @@ export class ProfilePage implements OnInit {
   firebaseSvc = inject(FirebaseService);
   utilsSvc = inject(UtilsService);
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
   user(): User {
     return this.utilsSvc.getFromLocalStorage('user');
@@ -34,16 +37,16 @@ export class ProfilePage implements OnInit {
     user.image = await this.firebaseSvc.uploadImage(imagePath, dataUrl);
 
     this.firebaseSvc.updateDocument(path, { image: user.image }).then(async res => {
-        this.utilsSvc.saveInLocalStorage('user', user);
+      this.utilsSvc.saveInLocalStorage('user', user);
 
-        this.utilsSvc.presentToast({
-          message: 'Imagen actualizada exitosamente',
-          duration: 1500,
-          color: 'success',
-          position: 'middle',
-          icon: 'checkmark-circle-outline',
-        });
-      })
+      this.utilsSvc.presentToast({
+        message: 'Imagen actualizada exitosamente',
+        duration: 1500,
+        color: 'success',
+        position: 'middle',
+        icon: 'checkmark-circle-outline',
+      });
+    })
       .catch(error => {
         console.log(error);
 
